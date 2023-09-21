@@ -1,5 +1,5 @@
 import sympy as sp
-
+b = 3
 x, y = sp.symbols('x y')
 
 g = y* sp.ln(y**2+x**2)
