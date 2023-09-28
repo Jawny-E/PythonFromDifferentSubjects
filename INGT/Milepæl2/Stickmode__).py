@@ -1,0 +1,123 @@
+from sense_hat import SenseHat
+from time import sleep
+sense = SenseHat()
+event = sense.stick.wait_for_event()
+sense.clear()
+
+sense=SenseHat()
+
+r=(255, 0, 0)
+g=(0, 255, 0)
+b=(0, 0, 255)
+
+c=(0, 255, 255)
+m=(255, 0, 255)
+y=(255, 255, 0)
+k=(0, 0, 0)
+v = (180, 183, 184)
+
+w=(255, 255, 255)
+
+
+Level1 = [
+[v, v, v, v, v, v, v, v],
+[v, b, k, k, k, k, k, v],
+[v, k, k, k, k, k, k, v],
+[v, v, v, v, v, v, k, v],
+[v, k, k, k, k, k, k, v],
+[v, k, v, v, v, v, v, v],
+[v, k, k, g, k, k, k, v],
+[v, v, v, v, v, v, v, v]
+ ]
+  
+Level11 = [
+[v, v, v, v, v, v, v, v],
+[v, b, k, k, k, k, k, v],
+[v, v, k, k, k, k, k, v],
+[v, k, v, k, k, v, k, v],
+[v, k, k, k, v, k, k, v],
+[v, k, v, k, k, k, v, v],
+[v, k, g, k, v, k, k, v],
+[v, v, v, v, v, v, v, v]
+ ]
+
+Level111 = [
+[v, v, v, v, v, v, v, v],
+[v, b, k, k, k, k, v, v],
+[v, v, k, v, k, k, k, v],
+[v, v, k, k, v, k, v, v],
+[v, k, v, v, k, k, k, v],
+[v, k, k, v, k, v, v, v],
+[v, k, k, g, k, k, k, v],
+[v, v, v, v, v, v, v, v]
+]
+
+def win(win_count):
+  sense.show_message("Nice!",scroll_speed=0.05)
+  sleep(1)
+  
+  if win_count == 2:
+    sense.show_message("You WON!",scroll_speed=0.05)
+    exit()
+    
+  sense.show_message("Level up!",scroll_speed=0.05)
+
+  
+sense.set_pixels(sum(Level1,[]))
+x = 1
+y = 1
+
+def move_marble(x, y):
+  new_x = x
+  new_y = y
+  for event in sense.stick.get_events():
+    if event.action == "pressed":     
+        if event.direction == "up":
+          new_y -= 1
+        elif event.direction == "down":
+          new_y += 1
+        elif event.direction == "left":
+          new_x -= 1
+        elif event.direction == "right":
+          new_x += 1
+        elif event.direction == "middle":
+            sense.show_message("Quitter!", text_colour=[255,105,180], scroll_speed=0.05)
+            sleep(2)
+            exit()
+        new_x, new_y = check_wall(x, y, new_x, new_y)
+        print("The joystick was {} {}".format(event.action, event.direction))
+  return new_x, new_y
+
+def check_wall(x,y,new_x,new_y):
+    if maze[new_y][new_x] != v:
+        return new_x, new_y
+    elif maze[new_y][x] != v:
+        return x, new_y
+    elif maze[y][new_x] != v:
+        return new_x, y
+    else:
+        return x,y
+    
+win_count = 0
+maze = Level1
+x = 1
+y = 1
+
+running = True
+while running:
+  x, y = move_marble(x, y,)
+  if maze[y][x] == g:
+    win(win_count)
+    win_count = win_count + 1
+    print("Win",win_count)
+    if win_count == 1:
+      maze = Level11
+    if win_count == 2 :
+      maze = Level111
+    x = 1
+    y = 1
+  maze[y][x] = b
+  sense.set_pixels(sum(maze,[]))
+  sleep(0.05)
+  maze[y][x] = k
+  
