@@ -1,0 +1,4 @@
+{
+    "arduino.analyzeOnSettingChange": true,
+    "C_Cpp.errorSquiggles": "disabled"
+}
